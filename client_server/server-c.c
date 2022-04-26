@@ -7,31 +7,26 @@
 #include <netdb.h>
 #include <string.h>
 #include <time.h>
+#include <stdbool.h>
 
 #define SERVER_PORT  5432
 #define MAX_PENDING  5
 #define MAX_LINE     256
 
-void response()
+int response(char * chosenWord, int lives)
 {
   
   //opens txt file to read char from
   FILE *fp;
   char c;
+  char * pch;
+  int index;
+  bool found = false;
   
   fp = fopen("a.txt", "r");
   c = fgetc(fp);
-  
-  //TODO: next step is to change these if statements below to compare char to a word that the server chooses and printf the correct response
-  //compare char to a letter and printf a certain response
-  if (c == 'y')
-  {
-    printf("%s", "yes \n");
-  }
-  if (c == 'n')
-  {
-    printf("%s", "no \n");
-  }
+
+  pch = strchr(chosenWord, c);
 
   //code to print out entire txt file (for testing purposes if needed)
   /* 
@@ -42,7 +37,22 @@ void response()
     c = fgetc(fp);
   }
   */
-  
+
+  while(pch!=NULL)
+  {
+    index = (int)(pch-chosenWord);
+    printf("found at %d\n", index);
+    pch=strchr(pch+1,c);
+    found = true;
+  }
+  if(found == false)
+  {
+    lives--;
+    printf("Incorrect guess, lives remaining: %d\n", lives);
+    if(lives == 0)
+      printf("%s", "Game Over");
+    return lives;
+  }
 
   
   fclose(fp);
@@ -57,8 +67,10 @@ main()
 {
   struct sockaddr_in sin;
   char buf[MAX_LINE];
+  char * chosenWord;
   int buf_len, addr_len;
   int s, new_s;
+  int lives = 5;
   FILE* fp;
 
   /* build address data structure */
@@ -74,6 +86,7 @@ main()
   };
   srand((unsigned)time(NULL));
   int n = rand()%10;
+  chosenWord = wordList[n];
 
   /* setup passive open */
   if ((s = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
@@ -87,7 +100,7 @@ main()
   listen(s, MAX_PENDING);
 
 //Prints random word chosen (for testing purposes)
-printf("%s", wordList[n]);
+printf("%s", chosenWord);
 fflush(stdout);
 
 //TODO: allow multiple clients to connect
@@ -106,7 +119,7 @@ fflush(stdout);
       fputs(buf, fp);
       fclose(fp);
       
-     response();
+      lives = response(chosenWord, lives);
       fflush(stdout);
     }
     //fp = fopen("a.txt","r");
