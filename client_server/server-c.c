@@ -6,6 +6,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <string.h>
+#include <time.h>
 
 #define SERVER_PORT  5432
 #define MAX_PENDING  5
@@ -66,6 +67,14 @@ main()
   sin.sin_addr.s_addr = INADDR_ANY;
   sin.sin_port = htons(SERVER_PORT);
 
+  //Choose random word
+  const char* wordList[] = {
+    "purple", "blue", "yellow", "orange", "white", "tiger",
+    "alligator", "zebra", "elephant", "shark"
+  };
+  srand((unsigned)time(NULL));
+  int n = rand()%10;
+
   /* setup passive open */
   if ((s = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
     perror("simplex-talk: socket");
@@ -77,6 +86,9 @@ main()
   }
   listen(s, MAX_PENDING);
 
+//Prints random word chosen (for testing purposes)
+printf("%s", wordList[n]);
+fflush(stdout);
 
 //TODO: allow multiple clients to connect
  /* wait for connection, then receive and print text */

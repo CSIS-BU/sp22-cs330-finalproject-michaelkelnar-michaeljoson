@@ -15,10 +15,10 @@ Vagrant.configure(2) do |config|
   ## Configure hostname and port forwarding
   config.vm.hostname = "cs330"
   config.ssh.forward_x11 = true
-  config.vm.network "forwarded_port", guest: 8888, host: 8888
+  config.vm.network "forwarded_port", guest: 8888, host: 1234
   # Assignment 6
-  config.vm.network "forwarded_port", guest: 12000, host: 12000
-  config.vm.network "forwarded_port", guest: 80, host: 8000
+  config.vm.network "forwarded_port", guest: 12000, host: 4321
+  config.vm.network "forwarded_port", guest: 80, host: 8001
 
 
   vagrant_root = File.dirname(__FILE__)
