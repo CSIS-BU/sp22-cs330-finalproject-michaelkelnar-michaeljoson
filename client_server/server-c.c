@@ -13,7 +13,7 @@
 #define MAX_PENDING  5
 #define MAX_LINE     256
 
-int response(char * chosenWord, int lives)
+int response(char * chosenWord, int lives, char unknownWord[])
 {
   
   //opens txt file to read char from
@@ -25,6 +25,7 @@ int response(char * chosenWord, int lives)
   
   fp = fopen("a.txt", "r");
   c = fgetc(fp);
+  fclose(fp);
 
   pch = strchr(chosenWord, c);
 
@@ -38,28 +39,34 @@ int response(char * chosenWord, int lives)
   }
   */
 
+  //TODO: put the guess into the right index in the array then print out the full array with the blanks filled in based on the guesses
   while(pch!=NULL)
   {
     index = (int)(pch-chosenWord);
+    
     printf("found at %d\n", index);
+    printf("correct guess, lives remaining: %d\n", lives);
     pch=strchr(pch+1,c);
     found = true;
+    fp = fopen("a.txt", "w");
+
   }
   if(found == false)
   {
     lives--;
     printf("Incorrect guess, lives remaining: %d\n", lives);
     if(lives == 0)
-      printf("%s", "Game Over");
+    {
+      printf("%s", "Game Over, you lose\n");
+      exit(0);
+    }
+      
     return lives;
   }
 
   
-  fclose(fp);
 
-  
-
-  return 0;
+  return lives;
 }
 
 int
@@ -68,6 +75,7 @@ main()
   struct sockaddr_in sin;
   char buf[MAX_LINE];
   char * chosenWord;
+  char unknownWord[] = "";
   int buf_len, addr_len;
   int s, new_s;
   int lives = 5;
@@ -87,6 +95,14 @@ main()
   srand((unsigned)time(NULL));
   int n = rand()%10;
   chosenWord = wordList[n];
+  
+  //loop to create new string of blanks (underscores) to match the length of the chosenWord
+  for (int i = 0; i < strlen(chosenWord); i++)
+  {
+    strcat(unknownWord, "_");
+  }
+  //printf("%s", unknownWord);
+  //fflush(stdout);
 
   /* setup passive open */
   if ((s = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
@@ -119,7 +135,7 @@ fflush(stdout);
       fputs(buf, fp);
       fclose(fp);
       
-      lives = response(chosenWord, lives);
+      lives = response(chosenWord, lives, unknownWord);
       fflush(stdout);
     }
     //fp = fopen("a.txt","r");
