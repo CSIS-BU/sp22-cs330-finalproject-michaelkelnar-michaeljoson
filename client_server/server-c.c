@@ -130,7 +130,12 @@ fflush(stdout);
     while (buf_len = recv(new_s, buf, sizeof(buf), 0))
     {
       //TODO: instead of just printing, use buffer to compare char to entire word then send back result to 
+        /* For loop compares char to the chosen word */
+       //should the response function have another
+       //parameter? So that the recieved char can be sent as well
+        // for example:lives=response(chosenWord,lives,unknownWord,buf)
       
+        
       fp = fopen("a.txt", "w");
       fputs(buf, fp);
       fclose(fp);
