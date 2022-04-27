@@ -14,7 +14,7 @@ char guess()
 {
    char sendLetter;
        
-   printf("Enter your guess: ")
+   printf("Enter your guess: ");
    scanf(&sendLetter);
         
     return sendLetter;
