@@ -10,15 +10,7 @@
 #define MAX_LINE 256
 /*function for user to guess letter */
 //we may not need this but it may make guessing machinism easier 
-char guess() 
-{
-   char sendLetter;
-       
-   printf("Enter your guess: ");
-   scanf(&sendLetter);
-        
-    return sendLetter;
-}
+
 main(int argc, char * argv[])
 {
   FILE *fp;
@@ -64,7 +56,7 @@ main(int argc, char * argv[])
   /* main loop: get and send lines of text */
   while (fgets(buf, sizeof(buf), stdin)) {
     //not sure if this line of code is correct, will fix 2moro
-    //buf = guess();
+ 
 
     buf[MAX_LINE-1] = '\0';
     len = strlen(buf) + 1;
