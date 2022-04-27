@@ -70,8 +70,7 @@ main(int argc, char * argv[])
     len = strlen(buf) + 1;
     send(s, buf, len, 0);
     //TODO: After sending to server, receive message from server that shows the result of the guess
-        // add  while (buf_len = recv(new_s, buf, sizeof(buf), 0)), the server should send back number of lives
-        // as long as lives !=0, then the client can keep guessing, 
+        
 
   }
 }
