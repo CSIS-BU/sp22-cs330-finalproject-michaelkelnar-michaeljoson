@@ -13,7 +13,7 @@
 #define MAX_PENDING  5
 #define MAX_LINE     256
 
-void response(char * chosenWord, int *lives)
+void response(char * chosenWord, int *lives, char *blankWord)
 {
   //opens txt file to read char from
   FILE *fp;
@@ -30,13 +30,14 @@ void response(char * chosenWord, int *lives)
   while(pch!=NULL)
   {
     index = (int)(pch-chosenWord);
-    
+    blankWord[index] = c;
     printf("found at %d\n", index);
     printf("correct guess, lives remaining: %d\n", *lives);
+    printf("the word is %s\n",blankWord)
     pch=strchr(pch+1,c);
     found = true;
     fp = fopen("a.txt", "w");
-
+    
   }
   if(found == false)
   {
@@ -56,7 +57,7 @@ main()
   struct sockaddr_in sin;
   char buf[MAX_LINE];
   char * chosenWord;
-  char unknownWord[] = "";
+  char* unknownWord[] = {};
   int buf_len, addr_len;
   int s, new_s;
   int gameLives = 5;
@@ -119,7 +120,7 @@ fflush(stdout);
       fputs(buf, fp);
       fclose(fp);
       
-      response(chosenWord, &gameLives);
+      response(chosenWord, &gameLives, unknownWord);
       fflush(stdout);
     }
     //fp = fopen("a.txt","r");
