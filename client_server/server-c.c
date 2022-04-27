@@ -13,39 +13,26 @@
 #define MAX_PENDING  5
 #define MAX_LINE     256
 
-int response(char * chosenWord, int lives, char unknownWord[])
+void response(char * chosenWord, int *lives)
 {
-  
   //opens txt file to read char from
   FILE *fp;
   char c;
   char * pch;
   int index;
   bool found = false;
-  
+  int temp = *lives;
   fp = fopen("a.txt", "r");
   c = fgetc(fp);
   fclose(fp);
-
   pch = strchr(chosenWord, c);
 
-  //code to print out entire txt file (for testing purposes if needed)
-  /* 
-  while (c != EOF)
-  {
-    
-    //printf ("%c", c);
-    c = fgetc(fp);
-  }
-  */
-
-  //TODO: put the guess into the right index in the array then print out the full array with the blanks filled in based on the guesses
   while(pch!=NULL)
   {
     index = (int)(pch-chosenWord);
     
     printf("found at %d\n", index);
-    printf("correct guess, lives remaining: %d\n", lives);
+    printf("correct guess, lives remaining: %d\n", *lives);
     pch=strchr(pch+1,c);
     found = true;
     fp = fopen("a.txt", "w");
@@ -53,20 +40,14 @@ int response(char * chosenWord, int lives, char unknownWord[])
   }
   if(found == false)
   {
-    lives--;
-    printf("Incorrect guess, lives remaining: %d\n", lives);
-    if(lives == 0)
+    *lives = temp - 1;
+    printf("Incorrect guess, lives remaining: %d\n", *lives);
+    if(*lives == 0)
     {
       printf("%s", "Game Over, you lose\n");
       exit(0);
     }
-      
-    return lives;
   }
-
-  
-
-  return lives;
 }
 
 int
@@ -78,7 +59,7 @@ main()
   char unknownWord[] = "";
   int buf_len, addr_len;
   int s, new_s;
-  int lives = 5;
+  int gameLives = 5;
   FILE* fp;
 
   /* build address data structure */
@@ -140,7 +121,7 @@ fflush(stdout);
       fputs(buf, fp);
       fclose(fp);
       
-      lives = response(chosenWord, lives, unknownWord);
+      response(chosenWord, &gameLives);
       fflush(stdout);
     }
     //fp = fopen("a.txt","r");
