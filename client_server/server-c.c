@@ -13,12 +13,13 @@
 #define MAX_PENDING  5
 #define MAX_LINE     256
 
-void response(char * chosenWord, int *lives, char *blankWord)
+void response(char *chosenWord, int *lives, char *blankWord)
 {
   //opens txt file to read char from
   FILE *fp;
   char c;
   char * pch;
+  char* gamewinch;
   int index;
   bool found = false;
   int temp = *lives;
@@ -39,6 +40,13 @@ void response(char * chosenWord, int *lives, char *blankWord)
     fp = fopen("a.txt", "w");
     
   }
+  if (strchr(blankWord, '_') == NULL)
+  {
+      printf("%s", " You Win!\n");
+      exit(0);
+  }
+  
+  
   if(found == false)
   {
     *lives = temp - 1;
