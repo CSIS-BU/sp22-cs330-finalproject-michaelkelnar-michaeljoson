@@ -17,36 +17,50 @@ void response(char *chosenWord, int *lives, char *blankWord)
 {
   //opens txt file to read char from
   FILE *fp;
+  //chosen letter by client
   char c;
+  //used to search through string
   char * pch;
   char* gamewinch;
+  //location of letter in word
   int index;
+  //turns true if letter is in word
   bool found = false;
+  //used to update lives counter
   int temp = *lives;
+  //gets letter input by client from text file
   fp = fopen("a.txt", "r");
   c = fgetc(fp);
   fclose(fp);
   pch = strchr(chosenWord, c);
 
+  //loops through the word to find multiple instances of the chosen letter
   while(pch!=NULL)
   {
     index = (int)(pch-chosenWord);
+
+    //adds the letter if found to the blank word
     blankWord[index] = c;
+
+    //displays the index, lives remaining, and the letters found with dashes
     printf("found at %d\n", index);
     printf("correct guess, lives remaining: %d\n", *lives);
     printf("the word is %s\n",blankWord)
+
+    //increments to the index found in order to search through the word again
     pch=strchr(pch+1,c);
-    found = true;
-    fp = fopen("a.txt", "w");
-    
+
+    found = true;    
   }
+
+  //if the word has no more _ the client has won and the game exits
   if (strchr(blankWord, '_') == NULL)
   {
       printf("%s", " You Win!\n");
       exit(0);
   }
   
-  
+  //if the chosen letter is not in the word lives are decremented and if no lives are left the user loses and exits
   if(found == false)
   {
     *lives = temp - 1;
@@ -62,6 +76,7 @@ void response(char *chosenWord, int *lives, char *blankWord)
 int
 main()
 {
+  //variables
   struct sockaddr_in sin;
   char buf[MAX_LINE];
   char * chosenWord;
@@ -77,11 +92,13 @@ main()
   sin.sin_addr.s_addr = INADDR_ANY;
   sin.sin_port = htons(SERVER_PORT);
 
-  //Choose random word
+  //word list
   const char* wordList[] = {
     "purple", "blue", "yellow", "orange", "white", "tiger",
     "alligator", "zebra", "elephant", "shark"
   };
+
+  //choses random word from list
   srand((unsigned)time(NULL));
   int n = rand()%10;
   chosenWord = wordList[n];
@@ -91,8 +108,6 @@ main()
   {
     strcat(unknownWord, "_");
   }
-  //printf("%s", unknownWord);
-  //fflush(stdout);
 
   /* setup passive open */
   if ((s = socket(PF_INET, SOCK_STREAM, 0)) < 0) {
@@ -109,35 +124,29 @@ main()
 printf("%s", chosenWord);
 fflush(stdout);
 
-//TODO: allow multiple clients to connect
- /* wait for connection, then receive and print text */
+  //TODO: allow multiple clients to connect
+  /* wait for connection, then receive and print text */
   while(1) {
-    if ((new_s = accept(s, (struct sockaddr *)&sin, &addr_len)) < 0) {
+    if ((new_s = accept(s, (struct sockaddr *)&sin, &addr_len)) < 0) 
+    {
       perror("simplex-talk: accept");
       exit(1);
     }
     
     while (buf_len = recv(new_s, buf, sizeof(buf), 0))
     {
-      //TODO: instead of just printing, use buffer to compare char to entire word then send back result to 
-        /* For loop compares char to the chosen word */
-       
-      
-        
       fp = fopen("a.txt", "w");
       fputs(buf, fp);
       fclose(fp);
       
+      //call funtion every time a letter is chosen by the client
       response(chosenWord, &gameLives, unknownWord);
       fflush(stdout);
     }
-    //fp = fopen("a.txt","r");
-    //fflush(fp);
-    //fclose(fp);
-    //fflush(stdout);
+    
     close(new_s);
-  
-  
   }
-
 }
+
+
+

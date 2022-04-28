@@ -8,8 +8,6 @@
 
 #define SERVER_PORT 5432
 #define MAX_LINE 256
-/*function for user to guess letter */
-//we may not need this but it may make guessing machinism easier 
 
 main(int argc, char * argv[])
 {
@@ -54,15 +52,11 @@ main(int argc, char * argv[])
     exit(1);
   }
   /* main loop: get and send lines of text */
-  while (fgets(buf, sizeof(buf), stdin)) {
-    //not sure if this line of code is correct, will fix 2moro
- 
+  while (fgets(buf, sizeof(buf), stdin)) { 
 
     buf[MAX_LINE-1] = '\0';
     len = strlen(buf) + 1;
-    send(s, buf, len, 0);
-    //TODO: After sending to server, receive message from server that shows the result of the guess
-        
+    send(s, buf, len, 0);        
 
   }
 }
